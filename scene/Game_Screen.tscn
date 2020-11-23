@@ -1,15 +1,23 @@
-[gd_scene load_steps=8 format=2]
+[gd_scene load_steps=12 format=2]
 
 [ext_resource path="res://fonts/default.res" type="DynamicFont" id=1]
 [ext_resource path="res://fonts/top_score_label.res" type="DynamicFont" id=2]
 [ext_resource path="res://fonts/bottom_score_label.res" type="DynamicFont" id=3]
 [ext_resource path="res://fonts/button.res" type="DynamicFont" id=4]
 [ext_resource path="res://scripts/grid.gd" type="Script" id=5]
+[ext_resource path="res://scripts/best_score.gd" type="Script" id=6]
+[ext_resource path="res://scene/game.gd" type="Script" id=7]
 
 [sub_resource type="StyleBoxFlat" id=1]
 bg_color = Color( 0.556863, 0.47451, 0.396078, 1 )
 
-[sub_resource type="Theme" id=2]
+[sub_resource type="StyleBoxFlat" id=2]
+bg_color = Color( 0.556863, 0.47451, 0.396078, 1 )
+
+[sub_resource type="StyleBoxFlat" id=3]
+bg_color = Color( 0.556863, 0.47451, 0.396078, 1 )
+
+[sub_resource type="Theme" id=4]
 Button/colors/font_color = Color( 0.88, 0.88, 0.88, 1 )
 Button/colors/font_color_disabled = Color( 0.9, 0.9, 0.9, 0.2 )
 Button/colors/font_color_hover = Color( 0.94, 0.94, 0.94, 1 )
@@ -17,9 +25,9 @@ Button/colors/font_color_pressed = Color( 1, 1, 1, 1 )
 Button/constants/hseparation = 2
 Button/fonts/font = ExtResource( 4 )
 Button/styles/disabled = null
-Button/styles/focus = null
-Button/styles/hover = null
-Button/styles/normal = SubResource( 1 )
+Button/styles/focus = SubResource( 1 )
+Button/styles/hover = SubResource( 2 )
+Button/styles/normal = SubResource( 3 )
 Button/styles/pressed = null
 
 [node name="Game_Screen" type="Control"]
@@ -37,18 +45,19 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="game_margin" type="MarginContainer" parent="."]
+[node name="game_content" type="MarginContainer" parent="."]
 anchor_right = 1.0
 anchor_bottom = 1.0
 custom_constants/margin_right = 10
 custom_constants/margin_top = 10
 custom_constants/margin_left = 10
 custom_constants/margin_bottom = 10
+script = ExtResource( 7 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="vertical_grid_menu_container" type="VBoxContainer" parent="game_margin"]
+[node name="vertical_grid_menu_container" type="VBoxContainer" parent="game_content"]
 margin_left = 10.0
 margin_top = 10.0
 margin_right = 540.0
@@ -57,11 +66,11 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="game_menu" type="HBoxContainer" parent="game_margin/vertical_grid_menu_container"]
+[node name="game_menu" type="HBoxContainer" parent="game_content/vertical_grid_menu_container"]
 margin_right = 530.0
 margin_bottom = 88.0
 
-[node name="2048_label" type="Label" parent="game_margin/vertical_grid_menu_container/game_menu"]
+[node name="2048_label" type="Label" parent="game_content/vertical_grid_menu_container/game_menu"]
 margin_right = 263.0
 margin_bottom = 88.0
 size_flags_horizontal = 3
@@ -70,21 +79,21 @@ custom_fonts/font = ExtResource( 1 )
 custom_colors/font_color = Color( 0.462745, 0.427451, 0.392157, 1 )
 text = "2048"
 
-[node name="scores" type="HBoxContainer" parent="game_margin/vertical_grid_menu_container/game_menu"]
+[node name="scores" type="HBoxContainer" parent="game_content/vertical_grid_menu_container/game_menu"]
 margin_left = 267.0
 margin_right = 530.0
 margin_bottom = 88.0
 size_flags_horizontal = 3
 alignment = 2
 
-[node name="current_score_background" type="ColorRect" parent="game_margin/vertical_grid_menu_container/game_menu/scores"]
+[node name="current_score_background" type="ColorRect" parent="game_content/vertical_grid_menu_container/game_menu/scores"]
 margin_left = 19.0
 margin_right = 139.0
 margin_bottom = 88.0
 rect_min_size = Vector2( 120, 0 )
 color = Color( 0.733333, 0.678431, 0.627451, 1 )
 
-[node name="current_score_container" type="VBoxContainer" parent="game_margin/vertical_grid_menu_container/game_menu/scores/current_score_background"]
+[node name="current_score_container" type="VBoxContainer" parent="game_content/vertical_grid_menu_container/game_menu/scores/current_score_background"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 alignment = 2
@@ -92,7 +101,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="curr_score_label" type="Label" parent="game_margin/vertical_grid_menu_container/game_menu/scores/current_score_background/current_score_container"]
+[node name="curr_score_label" type="Label" parent="game_content/vertical_grid_menu_container/game_menu/scores/current_score_background/current_score_container"]
 margin_right = 120.0
 margin_bottom = 26.0
 custom_fonts/font = ExtResource( 2 )
@@ -102,7 +111,7 @@ custom_constants/shadow_as_outline = 1
 text = "SCORE"
 align = 1
 
-[node name="current_score" type="Label" parent="game_margin/vertical_grid_menu_container/game_menu/scores/current_score_background/current_score_container"]
+[node name="current_score" type="Label" parent="game_content/vertical_grid_menu_container/game_menu/scores/current_score_background/current_score_container"]
 margin_top = 31.0
 margin_right = 120.0
 margin_bottom = 86.0
@@ -114,14 +123,15 @@ custom_constants/shadow_as_outline = 1
 text = "0"
 align = 1
 
-[node name="best_score" type="ColorRect" parent="game_margin/vertical_grid_menu_container/game_menu/scores"]
+[node name="best_score" type="ColorRect" parent="game_content/vertical_grid_menu_container/game_menu/scores"]
 margin_left = 143.0
 margin_right = 263.0
 margin_bottom = 88.0
 rect_min_size = Vector2( 120, 0 )
 color = Color( 0.733333, 0.678431, 0.627451, 1 )
+script = ExtResource( 6 )
 
-[node name="best_score_container" type="VBoxContainer" parent="game_margin/vertical_grid_menu_container/game_menu/scores/best_score"]
+[node name="best_score_container" type="VBoxContainer" parent="game_content/vertical_grid_menu_container/game_menu/scores/best_score"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 alignment = 2
@@ -129,7 +139,7 @@ __meta__ = {
 "_edit_use_anchors_": false
 }
 
-[node name="best_score_label" type="Label" parent="game_margin/vertical_grid_menu_container/game_menu/scores/best_score/best_score_container"]
+[node name="best_score_label" type="Label" parent="game_content/vertical_grid_menu_container/game_menu/scores/best_score/best_score_container"]
 margin_right = 120.0
 margin_bottom = 26.0
 custom_fonts/font = ExtResource( 2 )
@@ -139,7 +149,7 @@ custom_constants/shadow_as_outline = 1
 text = "BEST"
 align = 1
 
-[node name="best_score" type="Label" parent="game_margin/vertical_grid_menu_container/game_menu/scores/best_score/best_score_container"]
+[node name="best_score" type="Label" parent="game_content/vertical_grid_menu_container/game_menu/scores/best_score/best_score_container"]
 margin_top = 31.0
 margin_right = 120.0
 margin_bottom = 86.0
@@ -151,18 +161,18 @@ custom_constants/shadow_as_outline = 1
 text = "0"
 align = 1
 
-[node name="Button" type="Button" parent="game_margin/vertical_grid_menu_container"]
+[node name="new_game" type="Button" parent="game_content/vertical_grid_menu_container"]
 margin_left = 413.0
 margin_top = 92.0
 margin_right = 530.0
 margin_bottom = 126.0
 size_flags_horizontal = 8
-theme = SubResource( 2 )
+theme = SubResource( 4 )
 custom_fonts/font = ExtResource( 4 )
 custom_colors/font_color = Color( 0.94902, 0.937255, 0.929412, 1 )
 text = "New Game"
 
-[node name="grid" type="Control" parent="game_margin/vertical_grid_menu_container"]
+[node name="grid" type="Control" parent="game_content/vertical_grid_menu_container"]
 margin_top = 130.0
 margin_right = 530.0
 margin_bottom = 580.0
@@ -170,10 +180,11 @@ size_flags_horizontal = 3
 size_flags_vertical = 3
 script = ExtResource( 5 )
 
-[node name="grid_color" type="ColorRect" parent="game_margin/vertical_grid_menu_container/grid"]
+[node name="grid_color" type="ColorRect" parent="game_content/vertical_grid_menu_container/grid"]
 anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color( 0.729412, 0.67451, 0.623529, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+[connection signal="button_down" from="game_content/vertical_grid_menu_container/new_game" to="game_content" method="_on_new_game_button_down"]
