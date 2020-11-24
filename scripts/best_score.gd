@@ -34,3 +34,7 @@ func save_best_score(score):
 	if (error == OK):
 		file.store_32(best_score)
 	file.close()	
+	
+func _on_current_score_background_increase_best(current_score):
+	if (current_score > best_score):
+		save_best_score(current_score)	

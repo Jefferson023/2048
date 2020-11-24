@@ -189,5 +189,8 @@ color = Color( 0.729412, 0.67451, 0.623529, 1 )
 __meta__ = {
 "_edit_use_anchors_": false
 }
+[connection signal="reset_score" from="game_content" to="game_content/vertical_grid_menu_container/game_menu/scores/current_score_background" method="_on_game_content_reset_score"]
+[connection signal="increase_best" from="game_content/vertical_grid_menu_container/game_menu/scores/current_score_background" to="game_content/vertical_grid_menu_container/game_menu/scores/best_score" method="_on_current_score_background_increase_best"]
 [connection signal="button_down" from="game_content/vertical_grid_menu_container/new_game" to="game_content" method="_on_new_game_button_down"]
+[connection signal="game_over" from="game_content/vertical_grid_menu_container/grid" to="game_content/vertical_grid_menu_container/game_menu/scores/current_score_background" method="_on_grid_game_over"]
 [connection signal="increase_score" from="game_content/vertical_grid_menu_container/grid" to="game_content/vertical_grid_menu_container/game_menu/scores/current_score_background" method="_on_grid_increase_score"]

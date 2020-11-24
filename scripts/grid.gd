@@ -6,11 +6,13 @@ export var margin = 10
 var grid = []
 var cell_height = 0
 var cell_width = 0
+var has_started = false
 
 const piece_scene = preload("res://scene/piece.tscn")
 var rng = RandomNumberGenerator.new()
 
 signal increase_score(points)
+signal game_over()
 
 func _ready():
 	update_cell_size()
@@ -66,18 +68,20 @@ func create_piece_at_random_position():
 		grid[piece_position[0]][piece_position[1]].update_value(2)
 	else:
 		#game over
-		pass
+		emit_signal("game_over")
+		has_started = false
+		
 func _process(delta):
-	if (Input.is_action_just_pressed("ui_up")):
+	if (Input.is_action_just_pressed("ui_up") and has_started):
 		_move_up()
 		create_piece_at_random_position()	
-	elif (Input.is_action_just_pressed("ui_down")):
+	elif (Input.is_action_just_pressed("ui_down") and has_started):
 		_move_down()
 		create_piece_at_random_position()	
-	elif (Input.is_action_just_pressed("ui_left")):
+	elif (Input.is_action_just_pressed("ui_left") and has_started):
 		_move_left()
 		create_piece_at_random_position()
-	elif (Input.is_action_just_pressed("ui_right")):
+	elif (Input.is_action_just_pressed("ui_right") and has_started):
 		_move_right()	
 		create_piece_at_random_position()		
 
@@ -136,7 +140,8 @@ func _move_down():
 					last_piece.update_value(next_piece.piece_value)
 					next_piece.update_value(0)
 					last_piece = next_piece
-	emit_signal("increase_score", points)		
+	emit_signal("increase_score", points)	
+		
 func _move_left():
 	var points = 0
 	for row in range(grid_rows):
@@ -164,7 +169,8 @@ func _move_left():
 					last_piece.update_value(next_piece.piece_value)
 					next_piece.update_value(0)
 					last_piece = next_piece
-	emit_signal("increase_score", points)				
+	emit_signal("increase_score", points)	
+				
 func _move_right():
 	var points = 0
 	for row in range(grid_rows):
