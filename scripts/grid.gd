@@ -10,6 +10,8 @@ var cell_width = 0
 const piece_scene = preload("res://scene/piece.tscn")
 var rng = RandomNumberGenerator.new()
 
+signal increase_score(points)
+
 func _ready():
 	update_cell_size()
 	start_restart_grid()
@@ -67,9 +69,11 @@ func create_piece_at_random_position():
 		pass
 func _process(delta):
 	if (Input.is_action_just_pressed("ui_up")):
-		pass
+		_move_up()
+		create_piece_at_random_position()	
 	elif (Input.is_action_just_pressed("ui_down")):
-		pass
+		_move_down()
+		create_piece_at_random_position()	
 	elif (Input.is_action_just_pressed("ui_left")):
 		_move_left()
 		create_piece_at_random_position()
@@ -77,26 +81,90 @@ func _process(delta):
 		_move_right()	
 		create_piece_at_random_position()		
 
+func _move_up():
+	var points = 0
+	for column in range(grid_columns):
+		#remove todos os espaços vazios e desloca pra cima
+		for row in range(grid_rows):
+			var piece = grid[row][column]
+			for next_row in range(row+1, grid_rows):
+				var next_piece = grid[next_row][column]
+				if (piece.piece_value == 0) and (next_piece.piece_value != 0):
+					piece.update_value(next_piece.piece_value)
+					next_piece.update_value(0)
+		#soma todos que pode somar			
+		for row in range(grid_rows-1):
+			var piece = grid[row][column]
+			var next_piece = grid[row+1][column]
+			if (piece.piece_value == next_piece.piece_value or piece.piece_value == 0):
+				#incrementa os pontos
+				if (piece.piece_value != 0):
+					points += (piece.piece_value + next_piece.piece_value)	
+				piece.update_value(piece.piece_value + next_piece.piece_value)
+				#remove os espaços em branco criados	
+				var last_piece = next_piece
+				for next_row in range(row+1, grid_rows-1):
+					next_piece = grid[next_row][column]
+					last_piece.update_value(next_piece.piece_value)
+					next_piece.update_value(0)
+					last_piece = next_piece
+	emit_signal("increase_score", points)
+func _move_down():
+	var points = 0
+	for column in range(grid_columns):
+		#remove todos os espaços vazios e desloca pra cima
+		for row in range(grid_rows-1, -1, -1):
+			var piece = grid[row][column]
+			for next_row in range(row-1, -1, -1):
+				var next_piece = grid[next_row][column]
+				if (piece.piece_value == 0) and (next_piece.piece_value != 0):
+					piece.update_value(next_piece.piece_value)
+					next_piece.update_value(0)
+		#soma todos que pode somar			
+		for row in range(grid_rows-1, 0, -1):
+			var piece = grid[row][column]
+			var next_piece = grid[row-1][column]
+			if (piece.piece_value == next_piece.piece_value or piece.piece_value == 0):
+				#incrementa os pontos
+				if (piece.piece_value != 0):
+					points += (piece.piece_value + next_piece.piece_value)	
+				piece.update_value(piece.piece_value + next_piece.piece_value)
+				#remove os espaços em branco criados	
+				var last_piece = next_piece
+				for next_row in range(row-1, -1, -1):
+					next_piece = grid[next_row][column]
+					last_piece.update_value(next_piece.piece_value)
+					next_piece.update_value(0)
+					last_piece = next_piece
+	emit_signal("increase_score", points)		
 func _move_left():
 	var points = 0
 	for row in range(grid_rows):
-			for column in range(grid_columns):
-				var piece = grid[row][column]
-				for next_column in range(column+1, grid_columns):
-					var next_piece = grid[row][next_column]
-					if (piece.piece_value == 0) and (next_piece.piece_value != 0):
-						piece.update_value(next_piece.piece_value)
-						next_piece.update_value(0)
-			for column in range(grid_columns-1):
-				var piece = grid[row][column]
-				var next_piece = grid[row][column+1]
-				if (piece.piece_value == next_piece.piece_value or piece.piece_value == 0):
-					if (piece.piece_value != 0):
-						points += (piece.piece_value + next_piece.piece_value)		
-					piece.update_value(piece.piece_value + next_piece.piece_value)
+		#remove todos os espaços vazios e desloca pra esquerda
+		for column in range(grid_columns):
+			var piece = grid[row][column]
+			for next_column in range(column+1, grid_columns):
+				var next_piece = grid[row][next_column]
+				if (piece.piece_value == 0) and (next_piece.piece_value != 0):
+					piece.update_value(next_piece.piece_value)
 					next_piece.update_value(0)
-			print(points)	
-						
+			#soma todos que pode somar			
+		for column in range(grid_columns-1):
+			var piece = grid[row][column]
+			var next_piece = grid[row][column+1]
+			if (piece.piece_value == next_piece.piece_value or piece.piece_value == 0):
+				#incrementa os pontos
+				if (piece.piece_value != 0):
+					points += (piece.piece_value + next_piece.piece_value)	
+				piece.update_value(piece.piece_value + next_piece.piece_value)
+				#remove os espaços em branco criados	
+				var last_piece = next_piece
+				for next_column in range(column+1, grid_columns-1):
+					next_piece = grid[row][next_column]
+					last_piece.update_value(next_piece.piece_value)
+					next_piece.update_value(0)
+					last_piece = next_piece
+	emit_signal("increase_score", points)				
 func _move_right():
 	var points = 0
 	for row in range(grid_rows):
@@ -114,5 +182,10 @@ func _move_right():
 				if (piece.piece_value != 0):
 					points += (piece.piece_value + next_piece.piece_value)		
 				piece.update_value(piece.piece_value + next_piece.piece_value)
-				next_piece.update_value(0)
-			print(points)	
+				var last_piece = next_piece
+				for next_column in range(column-1, 0, -1):
+					next_piece = grid[row][next_column]
+					last_piece.update_value(next_piece.piece_value)
+					next_piece.update_value(0)
+					last_piece = next_piece
+	emit_signal("increase_score", points)				
